@@ -45,6 +45,12 @@ const userSchema = new mongoose.Schema(
     }
 )
 
+userSchema.virtual('tasks', {
+    ref: 'Task',
+    localField: '_id',
+    foreignField: 'user'
+})
+
 userSchema.methods.toJSON = function () {
     const user = this
     const userObject = user.toObject()
@@ -89,6 +95,12 @@ userSchema.pre('save', async function (next) {
 
     console.log('Just before saving')
 
+    next()
+})
+
+userSchema.pre('remove', async function (next) {
+    const user = this
+    
     next()
 })
 
