@@ -4,6 +4,22 @@ const User = require('../models/user');
 
 const auth = require('../middleware/auth');
 
+const multer = require('multer');
+const upload = multer({
+    dest: 'avatar',
+    limits: {
+        fileSize: 1000000,
+    },
+    fileFilter(req, file, cb) {
+        if (!file.originalname.match(/\.(png|jpg|jpeg)$/)) {
+            return cb(new Error('Please upload valid image'))
+        }
+        cb(undefined, true)
+        // cb(new Error('Please upload valid image'))
+        // cb(undefined, true)
+    }
+})
+
 /** Route to create a user */
 router.post('/users', async (req, res) => {
     const user = new User(req.body)
@@ -84,6 +100,11 @@ router.patch('/users/me', auth, async (req, res) => {
     } catch (error) {
         res.status(400).send(error)
     }
+})
+
+/**Upload user avatar */
+router.post('/users/me/avatar', auth, upload.single('avatar'), (req, res) => {
+    res.send()
 })
 
 /** Route to delete a user */
